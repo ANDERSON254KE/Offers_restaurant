@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="restaurant-form">
+    <h2>Restaurant Details</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div id="map" style="height: 400px; width: 100%; margin-bottom: 20px;"></div>
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<script>
+let map;
+let marker;
+
+function initMap() {
+    // Default to center of your city
+    const defaultLocation = { lat: -1.2921, lng: 36.8219 }; // Example: Nairobi
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: defaultLocation,
+        zoom: 13
+    });
+
+    // Initialize the Places service
+    const input = document.getElementById('address-input');
+    const autocomplete = new google.maps.places.Autocomplete(input);
+
+    // Set initial marker
+    marker = new google.maps.Marker({
+        map: map,
+        draggable: true,
+        position: defaultLocation
+    });
+
+    // Update form fields when place is selected
+    autocomplete.addListener('place_changed', function() {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) return;
+
+        // Update map and marker
+        map.setCenter(place.geometry.location);
+        marker.setPosition(place.geometry.location);
+
+        // Update hidden form fields
+        document.getElementById('id_latitude').value = place.geometry.location.lat();
+        document.getElementById('id_longitude').value = place.geometry.location.lng();
+    });
+
+    // Update form fields when marker is dragged
+    marker.addListener('dragend', function() {
+        const position = marker.getPosition();
+        document.getElementById('id_latitude').value = position.lat();
+        document.getElementById('id_longitude').value = position.lng();
+        
+        // Reverse geocode to get address
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: position }, function(results, status) {
+            if (status === 'OK') {
+                document.getElementById('address-input').value = results[0].formatted_address;
+            }
+        });
+    });
+}
+
+// Initialize map when page loads
+google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+{% endblock %} 

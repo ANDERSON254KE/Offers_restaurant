@@ -1,0 +1,20 @@
+# Django and REST framework
+Django>=3.2,<4.0
+djangorestframework>=3.12.4
+
+# Database
+psycopg2-binary>=2.9.1
+
+# GIS dependencies
+GDAL>=3.2.0
+
+# Environment variables
+python-dotenv>=0.19.0
+
+# Additional useful packages
+Pillow>=8.2.0  # For image handling
+django-crispy-forms>=1.12.0  # For better form rendering
+django-filter>=2.4.0  # For filtering in DRF
+markdown>=3.3.4  # For API documentation
+whitenoise>=5.2.0  # For serving static files
+gunicorn>=20.1.0  # For production deployment
